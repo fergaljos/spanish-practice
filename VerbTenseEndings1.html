@@ -205,7 +205,8 @@
             
             
             $(".quiz1").on("change paste keyup", function() {
-                var guess = $(this).val()
+                var guess = $(this).val().toLowerCase();
+                $(this).val(guess); 
                 var answer = $(this).attr("data")
                 //console.log(conjugValues)
                 
