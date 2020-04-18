@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 500px; 
+            font-family:Arial,Verdana,sans-serif;
+            font-size:1em; 
+            color:#00f;
+        }
+
+        th, td {
+            /* padding: 15px;
+            text-align: left; */
+            border: 1px solid black;
+            width: 170px;
+            overflow: hidden;
+        }
+
+        table#t01, #t02 {   
+            background-color: #f1f1c1;
+        }
+
+        input[type="text"] {
+            font-size:20px;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        </style>
+
+       
+
+    </head>
+    <body>
+        <h2>Verb Tense Ending #1 - V0.0.4</h2>
+        <p>Enter the correct ending into the table. [<span id="entry">...</span>]</p>
+        Special Characters: 
+        <button class="button" onclick="myFunctionSpecial('á')">á</button>
+        <button class="button" onclick="myFunctionSpecial('é')">é</button>
+        <button class="button" onclick="myFunctionSpecial('í')">í</button>
+        <button class="button" onclick="myFunctionSpecial('ó')">ó</button>
+        <button class="button" onclick="myFunctionSpecial('ú')">ú</button>
+        <button class="button" onclick="myFunctionSpecial('ñ')">ñ</button>
+
+        <table id="t01"></table>
+
+        <button class="button" onclick="myFunctionHint()">Show Hint</button>
+        Hint: [<span id="info"></span>] Score: [<span id="score">0</span>]
+        <br />
+        <a href="index.html"> Home</a>
+        <br />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+        <script>
+
+            var TableRow1 = "";
+            var TableRow2 = "";
+            var Rows = ["1","2","3","4","5","6"];
+            var hint="Select a cell first."
+            var selected = null;
+            var score = 0;
+    
+            var data = {
+            version: 1,
+            title: 'Mi tiempo libre',
+            text: [
+    
+            {tenseTitle:"Person", conjugationsCount:1, conjugations: [
+            {conjugTitle:"", conjugValues:["yo","tú", "el", "nostros", "vostros", "ellos" ] }
+            
+            ]},
+    
+            {tenseTitle:"Imperfecto", conjugationsCount:2, conjugations: [
+            {conjugTitle:"AR", conjugValues:["aba","abas", "aba", "abamos", "abais", "aban" ] },
+            {conjugTitle:"ER/IR", conjugValues:["ía","ías", "ía", "íamos", "íais", "ían" ] }
+            ]},
+    
+            {tenseTitle:"Preterito", conjugationsCount:3, conjugations: [
+            {conjugTitle:"AR", conjugValues:["é","aste", "ó", "amos", "asteis", "aron" ] },
+            {conjugTitle:"ER/IR", conjugValues:["í","iste", "ió", "imos", "isteis", "ieron" ] },
+            {conjugTitle:"Irreg", conjugValues:["e","iste", "o", "imos", "isteis", "ieron" ] }
+            ]},
+    
+            {tenseTitle:"Presento", conjugationsCount:3, conjugations: [
+            {conjugTitle:"AR", conjugValues:["o","as", "a", "amos", "ais", "an" ] },
+            {conjugTitle:"ER", conjugValues:["o","es", "e", "emos", "eis", "en" ] },
+            {conjugTitle:"IR", conjugValues:["o","es", "e", "imos", "is", "en" ] }
+            ]},
+    
+            {tenseTitle:"Futuro", conjugationsCount:1, conjugations: [
+            {conjugTitle:"AR/ER/IR", conjugValues:["e","as", "a", "emos", "eis", "an" ] },
+            ]},
+    
+            {tenseTitle:"Condicional", conjugationsCount:1, conjugations: [
+            {conjugTitle:"AR/ER/IR", conjugValues:["ía","ías", "ía", "íamos", "íais", "ían" ] }   
+            ]},
+    
+            ]
+            };
+    
+    // Show the HINT for the currently collected cell
+            function myFunctionHint() {
+                $("#info").text(hint);
+                }
+    
+    // Hanle the Special Characters
+            function myFunctionSpecial(a) {
+                txt = $("#entry").text()
+                $("#entry").text(txt + a);
+                //selected.val(txt + a);
+                if (selected !== null) {
+                    txt = selected.val() 
+                    selected.val(txt + a);
+    
+                    // Check the colour of selected
+                    var guess = selected.val()
+                    var answer = selected.attr("data")
+                    console.log(guess)
+                    
+                    //$("#info").text(conjugTitle);
+                    hint = answer;
+                    
+                        if (guess === '') {
+                        selected.css("background-color", "grey");
+                        } else if (guess === answer) {
+                        console.log('true')
+                        selected.css("background-color", "green");
+                        score++;
+                        $("#score").text(score);
+                        } else {
+                        console.log('false')
+                        selected.css("background-color", "red");
+                        //score--;
+                        //$("#score").text(score);
+                        }
+                    }
+    
+                }
+            
+    
+            function AddTableCellToRow(item, rowIndex, array) {
+                    Rows[rowIndex] += "<td><input class='quiz1' type='text' data='"+ item +"'></td>"
+                }
+    
+            function AddConjugationColumnToAllRows(itemTense, rowIndex, array) {
+                    TableRow2 += "<td>" + itemTense.conjugTitle + "</td>";
+                    itemTense.conjugValues.forEach(AddTableCellToRow);
+                }
+    
+            function BuildTableRows_1_and_2_Header(item) {
+                //console.log("Item: " + item.tenseTitle + " " + item.conjugationsCount )
+                if (item.conjugationsCount > 1) {
+                    TableRow1 += "<th colspan='" + item.conjugationsCount + "'>" + item.tenseTitle + "</th>";
+                } else
+                {
+                    TableRow1 += "<th>" + item.tenseTitle + "</th>";
+                }
+    
+                console.log("TableRow1 " + TableRow1 )
+                console.log("TableRow1 conjugations " + item.conjugations )
+    
+               item.conjugations.forEach(AddConjugationColumnToAllRows);
+            };
+    
+    
+            $(document).ready(function(){
+    
+            // Make 
+            // TableRow1 - Person	Imperfecto	Preterito	Presento	Futuro	Condiciona1
+            // TableRow2 - AR	ER/IR	AR	ER/IR	Irreg	AR	ER	IR	AR/ER/IR	AR/ER/IR
+            TableRow1 = "<tr>";
+            data.text.forEach(BuildTableRows_1_and_2_Header) ;
+            TableRow1 += "</tr>";
+            
+            console.log("TableRow1 " + TableRow1 );
+            console.log("TableRow2 " + TableRow2 );
+            console.log("TableRow3 " + Rows[0] );
+            console.log("TableRow4 " + Rows[1] );
+            
+            $("#t01").append(TableRow1);
+            $("#t01").append(TableRow2);
+            $("#t01").append("<tr>"+Rows[0]+"</tr>");
+            $("#t01").append("<tr>"+Rows[1]+"</tr>");
+            $("#t01").append("<tr>"+Rows[2]+"</tr>");
+            $("#t01").append("<tr>"+Rows[3]+"</tr>");
+            $("#t01").append("<tr>"+Rows[4]+"</tr>");
+            $("#t01").append("<tr>"+Rows[5]+"</tr>");
+            
+            
+            $(".quiz1").on("change paste keyup", function() {
+                var guess = $(this).val()
+                var answer = $(this).attr("data")
+                //console.log(conjugValues)
+                
+                hint = answer;
+                
+                if (guess === '') {
+                    $(this).css("background-color", "grey");
+                } else if (guess === answer) {
+                console.log('true')
+                    $(this).css("background-color", "green");
+                    score++;
+                    $("#score").text(score);
+                } else {
+                console.log('false')
+                $(this).css("background-color", "red");
+                    //score--;
+                    //$("#score").text(score);
+                }
+            
+            });
+    
+            $(".quiz1").focus( function() {
+                //hint = "mouse";
+                //$("#info").text("focus");
+                selected = $(this);
+                
+                hint = selected.attr("data");
+                $("#info").text("");
+                });
+            
+            
+            });
+    
+    
+            </script>
+
+    </body>
+</html>
