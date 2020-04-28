@@ -70,16 +70,23 @@
 
         <script>
 
+            // This is 1 page experiment in HTML and JQuery.
+            // a) To help me and some of my class learn Spanish
+            // b) Publish a site on GitHub
+            // b) As a exercise in pure <html> and JavaScript with just JQuery to discuss and refractor with a few friends. 
+
+
             var TableRow1 = "";
             var TableRow2 = "";
             var Rows = ["1","2","3","4","5","6"];
             var hint="Select a cell first."
             var selected = null;
             var score = 0;
-    
+
+            // Verb Data
             var data = {
             version: 1,
-            title: 'Mi tiempo libre',
+            title: 'Verb endings',
             text: [
     
             {tenseTitle:"Person", conjugationsCount:1, conjugations: [
@@ -115,12 +122,12 @@
             ]
             };
     
-    // Show the HINT for the currently collected cell
+            // Show the HINT for the currently collected cell
             function myFunctionHint() {
                 $("#info").text(hint);
-                }
+            }
     
-    // Hanle the Special Characters
+            // Handle the Special Characters
             function myFunctionSpecial(a) {
                 txt = $("#entry").text()
                 $("#entry").text(txt + a);
@@ -150,20 +157,24 @@
                         //score--;
                         //$("#score").text(score);
                         }
-                    }
-    
                 }
-            
     
+            }; //  myFunctionSpecial()
+            
+            // Add a cell to the specified 'rowIndex' Row
             function AddTableCellToRow(item, rowIndex, array) {
                     Rows[rowIndex] += "<td><input class='quiz1' type='text' data='"+ item +"'></td>"
-                }
+            } // AddTableCellToRow(...)
     
+            // Add a column to the 
             function AddConjugationColumnToAllRows(itemTense, rowIndex, array) {
                     TableRow2 += "<td>" + itemTense.conjugTitle + "</td>";
                     itemTense.conjugValues.forEach(AddTableCellToRow);
-                }
-    
+            }; // AddConjugationColumnToAllRows(...)
+        
+            // Build Rows 1 and 2 of the TABLE
+            // Tense Titles
+            // Conjugations Titles - AR, ER, IR or the like.
             function BuildTableRows_1_and_2_Header(item) {
                 //console.log("Item: " + item.tenseTitle + " " + item.conjugationsCount )
                 if (item.conjugationsCount > 1) {
@@ -172,76 +183,99 @@
                 {
                     TableRow1 += "<th>" + item.tenseTitle + "</th>";
                 }
-    
+
                 console.log("TableRow1 " + TableRow1 )
                 console.log("TableRow1 conjugations " + item.conjugations )
+
+                item.conjugations.forEach(AddConjugationColumnToAllRows);
+            }; //BuildTableRows_1_and_2_Header(...)
     
-               item.conjugations.forEach(AddConjugationColumnToAllRows);
-            };
-    
-    
+
+
+            // =======================================================
+            // ENTRY POINT
+            // Build the Table '#t01'
+            // Add focus and change handlers.
+            // ========================================================
             $(document).ready(function(){
-    
-            // Make 
-            // TableRow1 - Person	Imperfecto	Preterito	Presento	Futuro	Condiciona1
-            // TableRow2 - AR	ER/IR	AR	ER/IR	Irreg	AR	ER	IR	AR/ER/IR	AR/ER/IR
-            TableRow1 = "<tr>";
-            data.text.forEach(BuildTableRows_1_and_2_Header) ;
-            TableRow1 += "</tr>";
-            
-            console.log("TableRow1 " + TableRow1 );
-            console.log("TableRow2 " + TableRow2 );
-            console.log("TableRow3 " + Rows[0] );
-            console.log("TableRow4 " + Rows[1] );
-            
-            $("#t01").append(TableRow1);
-            $("#t01").append(TableRow2);
-            $("#t01").append("<tr>"+Rows[0]+"</tr>");
-            $("#t01").append("<tr>"+Rows[1]+"</tr>");
-            $("#t01").append("<tr>"+Rows[2]+"</tr>");
-            $("#t01").append("<tr>"+Rows[3]+"</tr>");
-            $("#t01").append("<tr>"+Rows[4]+"</tr>");
-            $("#t01").append("<tr>"+Rows[5]+"</tr>");
-            
-            
-            $(".quiz1").on("change paste keyup", function() {
-                var guess = $(this).val().toLowerCase();
-                $(this).val(guess); 
-                var answer = $(this).attr("data")
-                //console.log(conjugValues)
+        
+                // Make 
+                // TableRow1 - Person	Imperfecto	Preterito	Presento	Futuro	Condiciona1
+                // TableRow2 - AR	ER/IR	AR	ER/IR	Irreg	AR	ER	IR	AR/ER/IR	AR/ER/IR
+                // As the verb data is organised by column and the table are build in rows we build in memory first.
+                TableRow1 = "<tr>";
+                data.text.forEach(BuildTableRows_1_and_2_Header) ;
+                TableRow1 += "</tr>";
                 
-                hint = answer;
+                console.log("TableRow1 " + TableRow1 );
+                console.log("TableRow2 " + TableRow2 );
+                console.log("TableRow3 " + Rows[0] );
+                console.log("TableRow4 " + Rows[1] );
                 
-                if (guess === '') {
-                    $(this).css("background-color", "grey");
-                } else if (guess === answer) {
-                console.log('true')
-                    $(this).css("background-color", "green");
-                    score++;
-                    $("#score").text(score);
-                } else {
-                console.log('false')
-                $(this).css("background-color", "red");
-                    //score--;
-                    //$("#score").text(score);
-                }
-            
-            });
-    
-            $(".quiz1").focus( function() {
-                //hint = "mouse";
-                //$("#info").text("focus");
-                selected = $(this);
+                // As the verb data is organised by column and the table are build in rows we built in memory first.
+                // Now we add the 8 rows (2 headings) and 6 data to the table.
+                $("#t01").append(TableRow1);
+                $("#t01").append(TableRow2);
+                $("#t01").append("<tr>"+Rows[0]+"</tr>");
+                $("#t01").append("<tr>"+Rows[1]+"</tr>");
+                $("#t01").append("<tr>"+Rows[2]+"</tr>");
+                $("#t01").append("<tr>"+Rows[3]+"</tr>");
+                $("#t01").append("<tr>"+Rows[4]+"</tr>");
+                $("#t01").append("<tr>"+Rows[5]+"</tr>");
+
+                // Set up the event handlers for each cell for "change paste keyup" and "focus"
                 
-                hint = selected.attr("data");
-                $("#info").text("");
-                });
-            
-            
-            });
+                // User has typed or pasted text into a cell.
+                // compare it with answer that is stored in the "data" attribute
+                // also update the global "hint" in case user want to see it.
+                $(".quiz1").on("change paste keyup", function() {
+                    var guess = $(this).val().toLowerCase();
+                    $(this).val(guess); 
+                    var answer = $(this).attr("data")
+                    //console.log(conjugValues)
+                    
+                    hint = answer;  // Global hint
+                    
+                    if (guess === '') {
+                        $(this).css("background-color", "grey");
+                    } else if (guess === answer) {
+                    console.log('true')
+                        $(this).css("background-color", "green");
+                        score++;
+                        $("#score").text(score);
+                    } else {
+                    console.log('false')
+                    $(this).css("background-color", "red");
+                        //score--;
+                        //$("#score").text(score);
+                    }
+                
+                }); // $(".quiz1").on()
+
+
+                // User has give focus to a cell
+                // set select and hint
+                $(".quiz1").focus( function() {
+                    //hint = "mouse";
+                    //$("#info").text("focus");
+                    selected = $(this);
+                    
+                    hint = selected.attr("data");
+                    $("#info").text("");
+
+                }); // $(".quiz1").focus()
+                
+                
+            }); // $(document).ready()
+
+            // Each table cell is of class ".quiz1"
+            // The table is build from a data structure. 
+            // As the verb data is organised by column and the table are build in rows we build in memory first.
+            // Tables ROWS 1 and 2 and the Tense titles and Conjugations Titles - AR, ER, IR or the like
+            // Score is not working.
     
     
-            </script>
+        </script>
 
     </body>
 </html>
