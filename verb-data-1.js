@@ -5,7 +5,7 @@
             text: [
     
             {tenseTitle:"Person", conjugationsCount:1, conjugations: [
-            {conjugTitle:"", conjugValues:["yo","tú", "el", "nostros", "vostros", "ellos" ] }
+            {conjugTitle:"", conjugValues:["yo","tú", "él", "nosotros", "vosotros", "ellos" ] }
             
             ]},
     
